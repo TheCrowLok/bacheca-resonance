@@ -14,7 +14,7 @@ export default function Home() {
           {/* Paper backing for the title */}
           <div className="absolute inset-0 bg-white shadow-md transform -rotate-1 rounded" />
           <h1 className="relative z-10 text-5xl md:text-7xl font-handwriting font-bold text-gray-800 px-8 py-4 transform rotate-1">
-            Community Board
+            ECHOES OF RESONANCE
           </h1>
           <div className="thumbtack -top-1" />
         </div>
