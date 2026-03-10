@@ -3,7 +3,7 @@ import { api, type PostInput } from "@shared/routes";
 import { useToast } from "@/hooks/use-toast";
 
 // L'URL del tuo nuovo server su Render
-const API_BASE_URL = "https://bacheca-server.onrender.com";
+const API_BASE_URL = "";
 
 // Fetch all posts
 export function usePosts() {
