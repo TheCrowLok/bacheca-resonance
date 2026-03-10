@@ -4,15 +4,20 @@ import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
 import multer from "multer";
-import express from "express";
-import fs from "fs";
+import { v2 as cloudinary } from "cloudinary"; // Importiamo Cloudinary
 
-const upload = multer({ dest: "uploads/" });
+// Configurazione Cloudinary usando le tue variabili di Render
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Usiamo la memoria RAM invece del disco fisso (così Render non cancella nulla)
+const upload = multer({ storage: multer.memoryStorage() });
 
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
-  if (!fs.existsSync("uploads")) { fs.mkdirSync("uploads"); }
-  app.use("/uploads", express.static("uploads"));
-
+  
   app.get(api.posts.list.path, async (req, res) => {
     const allPosts = await storage.getPosts();
     res.status(200).json(allPosts);
@@ -31,13 +36,31 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.post(api.upload.create.path, upload.single("image"), (req, res) => {
-    if (!req.file) return res.status(400).json({ message: "No image file uploaded" });
-    const imageUrl = `/uploads/${req.file.filename}`;
-    res.status(201).json({ imageUrl });
+  // ROTTA UPLOAD AGGIORNATA PER CLOUDINARY
+  app.post(api.upload.create.path, upload.single("image"), async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file uploaded" });
+    }
+
+    try {
+      // Trasformiamo l'immagine in un formato leggibile da Cloudinary
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      
+      // Carichiamo su Cloudinary
+      const result = await cloudinary.uploader.upload(dataURI, {
+        folder: "bacheca_uploads",
+      });
+
+      // Restituiamo il link ETERNO di Cloudinary
+      res.status(201).json({ imageUrl: result.secure_url });
+    } catch (error) {
+      console.error("Errore Cloudinary:", error);
+      res.status(500).json({ message: "Impossibile caricare l'immagine" });
+    }
   });
 
-  // ROTTA DELETE PER ADMIN
+  // ROTTA DELETE PER ADMIN (Modalità Dio)
   app.delete("/api/posts/:id", async (req, res) => {
     const adminPassword = req.headers["x-admin-password"];
     if (adminPassword !== "admin123") {
