@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 34 45% 96%;
+    --foreground: 20 14% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 4%;
+
+    --primary: 11 80% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 20% 90%;
+    --secondary-foreground: 20 14% 4%;
+
+    --muted: 40 20% 90%;
+    --muted-foreground: 25 5% 45%;
+
+    --accent: 40 20% 90%;
+    --accent-foreground: 20 14% 4%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 85%;
+    --input: 40 15% 85%;
+    --ring: 11 80% 55%;
+
+    --radius: 0.75rem;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-handwriting {
+    font-family: 'Caveat', cursive;
+  }
+
+  .font-display {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .corkboard-bg {
+    /* Blu Cobalto Scurissimo */
+    background-color: #001b3d;
+    /* Effetto profondità con ombra interna */
+    box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.9);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .corkboard-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Genera una grana (noise) sottile */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.15;
+    /* Regola questo valore per più o meno grana */
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Custom sticky note styling */
+  .sticky-note {
+    position: relative;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.15), 0 15px 15px -5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .sticky-note::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 15px;
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.2);
+    transform: skew(-5deg) rotate(-2deg);
+    z-index: -1;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .sticky-note:hover {
+    transform: scale(1.05) rotate(0deg) translateY(-5px) !important;
+    box-shadow: 5px 15px 25px rgba(0, 0, 0, 0.2), 0 20px 20px -10px rgba(0, 0, 0, 0.15);
+    z-index: 50;
+  }
+
+  .sticky-note:hover::after {
+    opacity: 0.8;
+    box-shadow: 0px 12px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Cute little thumbtack */
+  .thumbtack {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fca5a5, #be123c);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), inset -1px -1px 3px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+
+  .thumbtack::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: translate(-50%, -50%);
+  }
+
+  /* Hide scrollbar for textarea but allow scroll */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
