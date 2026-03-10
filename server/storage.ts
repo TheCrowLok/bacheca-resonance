@@ -1,16 +1,17 @@
 import { db } from "./db";
 import { posts, type Post, type InsertPost } from "@shared/schema";
-import { eq } from "drizzle-orm"; // Importante per filtrare per ID
+import { eq, asc } from "drizzle-orm"; // Aggiunto 'asc' per l'ordine
 
 export interface IStorage {
   getPosts(): Promise<Post[]>;
   createPost(post: InsertPost): Promise<Post>;
-  deletePost(id: number): Promise<void>; // Dichiarazione nuovo metodo
+  deletePost(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
   async getPosts(): Promise<Post[]> {
-    return await db.select().from(posts);
+    // Ora chiediamo esplicitamente di ordinarli per data di creazione (dal più vecchio)
+    return await db.select().from(posts).orderBy(asc(posts.createdAt));
   }
 
   async createPost(post: InsertPost): Promise<Post> {
@@ -18,7 +19,6 @@ export class DatabaseStorage implements IStorage {
     return newPost;
   }
 
-  // Metodo per cancellare il post
   async deletePost(id: number): Promise<void> {
     await db.delete(posts).where(eq(posts.id, id));
   }
