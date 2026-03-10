@@ -53,25 +53,28 @@
   }
 
   .corkboard-bg {
-    /* Blu Cobalto Scurissimo */
+    /* IL TUO SFONDO PERSONALIZZATO */
+    background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url("https://res.cloudinary.com/dlmrsi7ok/image/upload/v1773169273/Progetto_senza_titolo_17_rbvroa.png");
+    
+    /* Rende lo sfondo fisso: i post scorrono, l'occhio resta fermo a guardare */
+    background-attachment: fixed;
+    
+    /* Centra l'immagine e la fa adattare a tutto lo schermo */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+    /* Colore di sicurezza e profondità ai bordi */
     background-color: #001b3d;
-    /* Effetto profondità con ombra interna */
     box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.9);
+    
     position: relative;
     overflow: hidden;
   }
 
+  /* Abbiamo rimosso la grana (noise) per non coprire l'occhio */
   .corkboard-bg::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    /* Genera una grana (noise) sottile */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.15;
-    /* Regola questo valore per più o meno grana */
-    mix-blend-mode: overlay;
-    pointer-events: none;
-    z-index: 0;
+    display: none;
   }
 
   /* Custom sticky note styling */
@@ -132,7 +135,6 @@
     transform: translate(-50%, -50%);
   }
 
-  /* Hide scrollbar for textarea but allow scroll */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
