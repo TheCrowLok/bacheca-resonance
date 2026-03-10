@@ -2,12 +2,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type PostInput } from "@shared/routes";
 import { useToast } from "@/hooks/use-toast";
 
+// L'URL del tuo nuovo server su Render
+const API_BASE_URL = "https://bacheca-server.onrender.com";
+
 // Fetch all posts
 export function usePosts() {
   return useQuery({
     queryKey: [api.posts.list.path],
     queryFn: async () => {
-      const res = await fetch(api.posts.list.path, { credentials: "include" });
+      // Ora puntiamo a Render
+      const res = await fetch(API_BASE_URL + api.posts.list.path, { credentials: "include" });
       if (!res.ok) {
         throw new Error("Failed to fetch posts");
       }
@@ -25,7 +29,8 @@ export function useUploadImage() {
       const formData = new FormData();
       formData.append("image", file);
       
-      const res = await fetch(api.upload.create.path, {
+      // Ora puntiamo a Render per l'upload
+      const res = await fetch(API_BASE_URL + api.upload.create.path, {
         method: api.upload.create.method,
         body: formData,
         credentials: "include",
@@ -55,10 +60,10 @@ export function useCreatePost() {
 
   return useMutation({
     mutationFn: async (data: PostInput) => {
-      // Validate input before sending to prevent unnecessary network requests
       const validated = api.posts.create.input.parse(data);
       
-      const res = await fetch(api.posts.create.path, {
+      // Ora puntiamo a Render per creare la nota
+      const res = await fetch(API_BASE_URL + api.posts.create.path, {
         method: api.posts.create.method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(validated),
@@ -76,7 +81,6 @@ export function useCreatePost() {
       return api.posts.create.responses[201].parse(await res.json());
     },
     onSuccess: () => {
-      // Invalidate the posts list query to trigger a refetch
       queryClient.invalidateQueries({ queryKey: [api.posts.list.path] });
       toast({
         title: "Success!",
